@@ -5,17 +5,14 @@
 // the /api RPC carrier. Strict-mode dispatch is driven by typert.host.js,
 // so no @Remote decorator is required here.
 //
-// The service resolves the OpenCode Go API key and queries the official
-// (undocumented) usage endpoint, returning a normalized, defensive result
-// instead of throwing: every failure state is a first-class outcome the
-// client can render or silently ignore.
+// The service resolves the OpenCode Go API key through the DSH credentials
+// seam and queries the official (undocumented) usage endpoint, returning a
+// normalized, defensive result instead of throwing: every failure state is
+// a first-class outcome the client can render or silently ignore.
 import z from "@deepseek-ai/schemastery";
 import { TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 import { credentialRef } from "@deepseek-ai/dsh-credentials";
 import { settingsNamespace } from "@deepseek-ai/dsh-settings";
-import { homedir } from "node:os";
-import { join } from "node:path";
-import { readFile } from "node:fs/promises";
 
 const DEFAULT_BASE_URL = "https://opencode.ai/zen/go/v1/usage";
 const DEFAULT_TIMEOUT_MS = 15000;
@@ -26,25 +23,15 @@ export const Config = z.object({
 });
 
 /**
- * Resolve the OpenCode Go API key, most-trusted first:
- *   1. DSH credentials / env reference OPENCODE_GO_API_KEY
- *      (covers ~/.dsh/.credentials.yaml and the process environment)
- *   2. OpenCode's own auth.json: opencode-go (fallback opencode) type=api key
+ * Resolve the OpenCode Go API key from the DSH credentials seam only:
+ * the OPENCODE_GO_API_KEY reference (covers $DSH_HOME/.credentials.yaml
+ * and the process environment). OpenCode CLI auth files are deliberately
+ * not consulted — this plugin is a DSH feature, not an opencode extension.
  */
 async function resolveApiKey(ctx) {
   try {
     const cred = await ctx.credentials.resolve(credentialRef("OPENCODE_GO_API_KEY"));
     if (cred && cred.value) return cred.value;
-  } catch {
-    /* fall through */
-  }
-  try {
-    const authPath = join(homedir(), ".local", "share", "opencode", "auth.json");
-    const raw = JSON.parse(await readFile(authPath, "utf8"));
-    const entry = raw["opencode-go"] ?? raw["opencode"];
-    if (entry && entry.type === "api" && typeof entry.key === "string" && entry.key.length > 0) {
-      return entry.key;
-    }
   } catch {
     /* fall through */
   }

@@ -67,12 +67,11 @@ Host-side tunables live on the plugin row in `cordis.yml`:
 
 ### API key configuration
 
-The plugin resolves the key in this order:
+The plugin resolves the key from the **DSH credentials seam only**:
 
-1. **DSH credentials seam / environment** — `OPENCODE_GO_API_KEY` in `$DSH_HOME/.credentials.yaml` (or as an environment variable). This is the recommended way.
-2. **OpenCode CLI** — `~/.local/share/opencode/auth.json` → the `opencode-go` entry (fallback `opencode`) with `type: "api"`.
+- `OPENCODE_GO_API_KEY` in `$DSH_HOME/.credentials.yaml` (or as an environment variable).
 
-On Windows, use `OPENCODE_GO_API_KEY` for best results; an `auth.json` in the same relative location is also read.
+No OpenCode CLI files are consulted — this plugin is a DSH feature and does not depend on an opencode installation.
 
 ## Behavior
 

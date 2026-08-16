@@ -67,12 +67,11 @@ dsh plugin --profile web add npm:dsh-opencode-go-usage-dock
 
 ### API Key 配置
 
-按以下顺序解析：
+仅从 **DSH 凭据库** 解析：
 
-1. **DSH 凭据库 / 环境变量** — `$DSH_HOME/.credentials.yaml` 中的 `OPENCODE_GO_API_KEY`（或环境变量）。推荐方式。
-2. **OpenCode CLI** — `~/.local/share/opencode/auth.json` → `opencode-go` 条目（兜底 `opencode`），`type: "api"`。
+- `$DSH_HOME/.credentials.yaml` 中的 `OPENCODE_GO_API_KEY`（或环境变量）。
 
-Windows 上建议使用 `OPENCODE_GO_API_KEY`；同相对路径下的 `auth.json` 也会被读取。
+不读取任何 OpenCode CLI 文件——本插件是 DSH 特性，不依赖 opencode 安装。
 
 ## 行为语义
 
