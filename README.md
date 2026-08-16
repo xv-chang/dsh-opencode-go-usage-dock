@@ -2,47 +2,49 @@
 
 [![npm version](https://img.shields.io/npm/v/dsh-opencode-go-usage-dock)](https://www.npmjs.com/package/dsh-opencode-go-usage-dock)
 
-A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) web-GUI plugin that shows your **OpenCode Go** plan usage in a compact readout docked **under the composer**, aligned with the input bar's width — the same seat the shipped stats line lives in. No settings page, no sidebar entries, nothing to click through: the three usage windows (5-hour rolling / weekly / monthly) are always visible while you chat.
+**中文** | [English](README.en.md)
 
-![OpenCode Go usage dock](docs/screenshot-dock.png)
+一个 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web GUI 插件：在**输入框下方**（与输入栏同宽、出厂"统计"行同一读数带）常驻显示你的 **OpenCode Go** 套餐用量。不需要设置页、不需要侧边栏入口——聊天时三个用量窗口（5 小时滚动 / 每周 / 每月）始终可见。
 
-## Features
+![OpenCode Go 用量条](docs/screenshot-dock.png)
 
-- **Composer dock readout** — one compact line under the input bar, perfectly aligned with it (`conversation.composer.dock`, order 10, beside the shipped stats line)
-- **Three usage windows** — 5-hour rolling / weekly / monthly, with percent used and reset time
-- **Health-colored dots** — green < 60%, amber 60–85%, red ≥ 85%
-- **Hover for details** — tooltip shows window name, spend limit and reset time
-- **Manual refresh** — a small refresh button re-queries the official endpoint on demand
-- **Silent fallback** — when opencode-go is not configured, the dock renders *nothing*: no error noise, no placeholder; only real failures (network / HTTP / parse) surface an error line with retry
-- **i18n** — Chinese and English dictionaries
+## 功能
 
-## Prerequisites
+- **输入框下方常驻用量条** — 注册在 `conversation.composer.dock`（order 10，与出厂统计行并列），宽度与输入框严格对齐
+- **三个用量窗口** — 滚动(5h) / 每周 / 每月，显示已用百分比与重置时间
+- **健康度彩点** — 绿 <60%、黄 60–85%、红 ≥85%
+- **悬停详情** — tooltip 显示窗口名、限额与重置时间
+- **手动刷新** — 小刷新按钮随时重新请求官方端点
+- **静默回退** — 未配置 opencode-go 时整条**完全不渲染**：没有报错噪音、没有占位；只有真实故障（网络 / HTTP / 解析）才显示错误行 + 重试
+- **i18n** — 中英双语（跟随 DSH 界面语言）
 
-- Node.js + [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) with the standard `dsh web` profile (the `api-gateway` client Remote and the `conversation.composer.dock` slot are part of the default composition)
-- An **OpenCode Go** subscription, with the `opencode-go` model configured in **Settings → Models**
-- An OpenCode Go **API key** (`sk-opencode-…`) — see [API key configuration](#api-key-configuration)
+## 前置条件
 
-## Install
+- Node.js + [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)，使用标准 `dsh web` profile（默认组合已包含 `api-gateway` 客户端 Remote 与 `conversation.composer.dock` 槽位）
+- 已订阅 **OpenCode Go**，并在 **设置 → 模型** 中添加 `opencode-go` 提供商
+- 有效的 OpenCode Go **API Key**（`sk-opencode-…`）— 见 [API Key 配置](#api-key-配置)
 
-### Via GitHub
+## 安装
+
+### GitHub 源
 
 ```sh
 dsh plugin --profile web add github:xv-chang/dsh-opencode-go-usage-dock
 ```
 
-### Via npm
+### npm 源
 
 ```sh
 dsh plugin --profile web add npm:dsh-opencode-go-usage-dock
 ```
 
-### Profile activation
+### Profile 激活
 
-Since **0.1.2** the package declares a `dsh.bundle` profile patch, so `dsh plugin add` registers it as a profile layer **automatically** — no manual `cordis.patch.yml` editing needed.
+**0.1.2 起**本包声明了 `dsh.bundle` profile 补丁，`dsh plugin add` 会**自动**把它注册为 profile layer——无需手动编辑 `cordis.patch.yml`。
 
-Then restart `dsh web` so the host half and the served client bundle pick up the plugin.
+然后重启 `dsh web`，让 Host 半与服务端 client bundle 生效。
 
-> Installing a version before 0.1.2? Add the row manually to `$DSH_HOME/profiles/web/cordis.patch.yml`:
+> 如果安装的是 0.1.2 之前的版本，需要手动在 `$DSH_HOME/profiles/web/cordis.patch.yml` 添加插件行：
 >
 > ```yaml
 > - insert:
@@ -50,59 +52,59 @@ Then restart `dsh web` so the host half and the served client bundle pick up the
 >       name: 'dsh-opencode-go-usage-dock'
 > ```
 
-## Configuration
+## 配置
 
-Host-side tunables live on the plugin row in `cordis.yml`:
+插件行 `config` 可调项：
 
 ```yaml
 - id: opencode-go-usage-dock
   name: dsh-opencode-go-usage-dock
   config:
-    baseUrl: https://opencode.ai/zen/go/v1/usage   # default
-    timeoutMs: 15000                               # default
+    baseUrl: https://opencode.ai/zen/go/v1/usage   # 默认
+    timeoutMs: 15000                               # 默认
 ```
 
-| Key | Default | Meaning |
+| Key | 默认值 | 含义 |
 | --- | --- | --- |
-| `baseUrl` | `https://opencode.ai/zen/go/v1/usage` | The usage endpoint. |
-| `timeoutMs` | `15000` | Fetch timeout in milliseconds. |
+| `baseUrl` | `https://opencode.ai/zen/go/v1/usage` | 用量接口地址 |
+| `timeoutMs` | `15000` | 请求超时（毫秒） |
 
-### API key configuration
+### API Key 配置
 
-The plugin resolves the key from the **DSH credentials seam only**:
+仅从 **DSH 凭据库** 解析：
 
-- `OPENCODE_GO_API_KEY` in `$DSH_HOME/.credentials.yaml` (or as an environment variable).
+- `$DSH_HOME/.credentials.yaml` 中的 `OPENCODE_GO_API_KEY`（或环境变量）。
 
-No OpenCode CLI files are consulted — this plugin is a DSH feature and does not depend on an opencode installation.
+不读取任何 OpenCode CLI 文件——本插件是 DSH 特性，不依赖 opencode 安装。
 
-## Behavior
+## 行为语义
 
-| State | Dock renders |
+| 状态 | 用量条渲染 |
 | --- | --- |
-| opencode-go **not in** Settings → Models | nothing (silent) |
-| No API key found | nothing (silent) |
-| Request failed (network / HTTP / parse) | red error line + retry button |
-| Success | `OpenCode Go ● 滚动 1% ● 本周 20% ● 本月 11% [刷新]` |
+| 设置 → 模型**没有** opencode-go | 不显示（静默） |
+| 未找到 API Key | 不显示（静默） |
+| 请求失败（网络 / HTTP / 解析） | 红色错误行 + 重试按钮 |
+| 正常 | `OpenCode Go ● 滚动 1% ● 本周 20% ● 本月 11% [刷新]` |
 
-## How it works
+## 工作原理
 
-A dual-face plugin. The Host publishes the `opencodeUsage` Typert Remote service; the Client mounts it, registers the `conversation.composer.dock` slot, and renders the readout. Communication rides the harness `/api` RPC carrier.
+双端插件。Host 发布 `opencodeUsage` Typert Remote 服务；Client 挂载它、注册 `conversation.composer.dock` 槽位并渲染读数条。通信走 harness 的 `/api` RPC 通道。
 
-| File | Role |
+| 文件 | 职责 |
 | --- | --- |
-| `index.js` | Host half — `OpencodeUsageGateway` (`TypertRemoteService`, service key `opencodeUsage`) |
-| `typert.host.js` | Hand-written Typert host manifest, registered via `exports["./typert"]` |
-| `client.js` | Browser bundle in `window.__ModuleLoader__.load` format — mounts the Remote, registers the dock slot, renders the readout |
-| `package.json` | Dual-face declaration: `main` + `exports["./client"]` + `exports["./typert"]` + `dsh.client` |
+| `index.js` | Host 半 — `OpencodeUsageGateway`（`TypertRemoteService`，服务键 `opencodeUsage`） |
+| `typert.host.js` | 手写 Typert host manifest，通过 `exports["./typert"]` 注册 |
+| `client.js` | `window.__ModuleLoader__.load` 格式浏览器 bundle — 挂载 Remote、注册 dock 槽位、渲染读数条 |
+| `package.json` | 双面声明：`main` + `exports["./client"]` + `exports["./typert"]` + `dsh.client` + `dsh.bundle` |
 
-### The usage endpoint
+### 用量接口
 
 ```http
 GET https://opencode.ai/zen/go/v1/usage
 Authorization: Bearer <API_KEY>
 ```
 
-Returns (community-verified shape; **not yet in OpenCode's public docs**, so parsing is defensive):
+返回（社区实测格式；**尚未进入 OpenCode 公开文档**，因此解析是防御式的）：
 
 ```json
 {
@@ -114,15 +116,15 @@ Returns (community-verified shape; **not yet in OpenCode's public docs**, so par
 }
 ```
 
-`percent` is 0–100; `resetsAt` is ISO-8601.
+`percent` 为 0–100；`resetsAt` 为 ISO-8601。
 
-## FAQ
+## 常见问题
 
-**The dock does not appear.** The slot is session-scoped: open any conversation. Then check, in order: (1) `opencode-go` is present in Settings → Models; (2) an API key resolves (see above); (3) the plugin row is in the profile patch layer and `dsh web` was restarted.
+**用量条不出现。** 该槽位是会话作用域：先打开任意一个会话。然后依次排查：(1) 设置 → 模型中有 `opencode-go`；(2) API Key 能解析（见上文）；(3) 插件行已写入 profile 补丁层且 `dsh web` 已重启。
 
-**I see "API Key 无效或已过期 (401)".** Your key is wrong or expired — re-issue it in the OpenCode dashboard and update the credentials seam.
+**提示 "API Key 无效或已过期 (401)"。** Key 错误或过期——去 OpenCode 后台重新签发并更新凭据。
 
-**Quota limits shown in tooltips ($12/$30/$60) drift.** They follow the OpenCode Go plan and are displayed for context only; the endpoint response does not include them.
+**tooltip 里的限额（$12/$30/$60）会有漂移。** 限额跟随 OpenCode Go 套餐，仅作展示参考；接口响应本身不包含限额。
 
 ## License
 
