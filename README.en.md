@@ -120,6 +120,9 @@ Returns (community-verified shape; **not yet in OpenCode's public docs**, so par
 
 ## FAQ
 
+**pnpm reports "missing peer react / @deepseek-ai/..." during install — is that normal?**
+Yes, safe to ignore. Those dependencies are provided by the DSH runtime: DSH resolves bundles two-anchor (installation first, profile second) and maintains a flat fallback directory at `$DSH_HOME/profiles/node_modules` so the plugin resolves the installation's built-in `@deepseek-ai/*` and `react` through ordinary Node parent-walk. pnpm only warns because the peers are not part of the profile dependency tree at install time; loading is unaffected. If you also see `declares no dsh.bundle`, upgrade to 0.1.2+ (it then registers itself as a profile layer automatically).
+
 **The dock does not appear.** The slot is session-scoped: open any conversation. Then check, in order: (1) `opencode-go` is present in Settings → Models; (2) an API key resolves (see above); (3) the plugin row is in the profile patch layer and `dsh web` was restarted.
 
 **I see "API Key 无效或已过期 (401)".** Your key is wrong or expired — re-issue it in the OpenCode dashboard and update the credentials seam.

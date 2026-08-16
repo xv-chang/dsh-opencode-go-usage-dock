@@ -120,6 +120,9 @@ Authorization: Bearer <API_KEY>
 
 ## 常见问题
 
+**安装时出现 pnpm peer dependencies 警告（missing peer react / @deepseek-ai/...）正常吗？**
+正常，可忽略。这些依赖由 DSH 运行时提供：DSH 通过 two-anchor 加载器解析（安装目录优先、profile 次之），并用 `$DSH_HOME/profiles/node_modules` 平面回退目录让插件经普通 Node parent-walk 解析到安装内置的 `@deepseek-ai/*` 与 `react`。pnpm 警告只因安装插件包时这些依赖不在 profile 依赖树中，不影响加载。若同时看到 `declares no dsh.bundle` 警告，请升级到 0.1.2+（会自动注册为 profile layer）。
+
 **用量条不出现。** 该槽位是会话作用域：先打开任意一个会话。然后依次排查：(1) 设置 → 模型中有 `opencode-go`；(2) API Key 能解析（见上文）；(3) 插件行已写入 profile 补丁层且 `dsh web` 已重启。
 
 **提示 "API Key 无效或已过期 (401)"。** Key 错误或过期——去 OpenCode 后台重新签发并更新凭据。

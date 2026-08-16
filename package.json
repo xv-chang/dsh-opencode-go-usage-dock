@@ -1,6 +1,6 @@
 {
   "name": "dsh-opencode-go-usage-dock",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "DeepSeek Harness plugin: OpenCode Go plan usage readout docked under the composer, aligned with the input bar width",
   "license": "MIT",
   "scripts": {
