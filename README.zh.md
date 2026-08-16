@@ -27,7 +27,7 @@
 ### GitHub 源
 
 ```sh
-dsh plugin --profile web add github:<你的GitHub>/dsh-opencode-go-usage-dock
+dsh plugin --profile web add github:xv-chang/dsh-opencode-go-usage-dock
 ```
 
 ### npm 源

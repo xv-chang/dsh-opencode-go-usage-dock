@@ -27,7 +27,7 @@ A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) web-GUI pl
 ### Via GitHub
 
 ```sh
-dsh plugin --profile web add github:<your-github>/dsh-opencode-go-usage-dock
+dsh plugin --profile web add github:xv-chang/dsh-opencode-go-usage-dock
 ```
 
 ### Via npm
