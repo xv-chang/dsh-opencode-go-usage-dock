@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "description": "DeepSeek Harness plugin: OpenCode Go plan usage readout docked under the composer, aligned with the input bar width",
   "license": "MIT",
+  "scripts": {
+    "test": "node --check index.js && node --check client.js && node --check typert.host.js"
+  },
   "keywords": [
     "deepseek-harness",
     "dsh",
+    "dsh-plugin",
     "plugin",
     "opencode",
     "opencode-go",
