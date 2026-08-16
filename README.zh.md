@@ -36,15 +36,19 @@ dsh plugin --profile web add github:xv-chang/dsh-opencode-go-usage-dock
 dsh plugin --profile web add npm:dsh-opencode-go-usage-dock
 ```
 
-### 注册插件行
+### Profile 激活
 
-在 profile 的补丁层（`$DSH_HOME/profiles/web/cordis.patch.yml`）添加插件行：
+**0.1.2 起**本包声明了 `dsh.bundle` profile 补丁，`dsh plugin add` 会**自动**把它注册为 profile layer——无需手动编辑 `cordis.patch.yml`。
 
-```yaml
-- insert:
-    - id: opencode-go-usage-dock
-      name: 'dsh-opencode-go-usage-dock'
-```
+然后重启 `dsh web`，让 Host 半与服务端 client bundle 生效。
+
+> 如果安装的是 0.1.2 之前的版本，需要手动在 `$DSH_HOME/profiles/web/cordis.patch.yml` 添加插件行：
+>
+> ```yaml
+> - insert:
+>     - id: opencode-go-usage-dock
+>       name: 'dsh-opencode-go-usage-dock'
+> ```
 
 重启 `dsh web`，让 Host 半与服务端 client bundle 生效。
 

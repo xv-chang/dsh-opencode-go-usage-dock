@@ -36,17 +36,19 @@ dsh plugin --profile web add github:xv-chang/dsh-opencode-go-usage-dock
 dsh plugin --profile web add npm:dsh-opencode-go-usage-dock
 ```
 
-### Register the plugin row
+### Profile activation
 
-Add the plugin row to your profile's patch layer (`$DSH_HOME/profiles/web/cordis.patch.yml`):
+Since **0.1.2** the package declares a `dsh.bundle` profile patch, so `dsh plugin add` registers it as a profile layer **automatically** — no manual `cordis.patch.yml` editing needed.
 
-```yaml
-- insert:
-    - id: opencode-go-usage-dock
-      name: 'dsh-opencode-go-usage-dock'
-```
+Then restart `dsh web` so the host half and the served client bundle pick up the plugin.
 
-Restart `dsh web` so the host half and the served client bundle pick up the plugin.
+> Installing a version before 0.1.2? Add the row manually to `$DSH_HOME/profiles/web/cordis.patch.yml`:
+>
+> ```yaml
+> - insert:
+>     - id: opencode-go-usage-dock
+>       name: 'dsh-opencode-go-usage-dock'
+> ```
 
 ## Configuration
 

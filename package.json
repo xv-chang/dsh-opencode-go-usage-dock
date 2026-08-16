@@ -1,6 +1,6 @@
 {
   "name": "dsh-opencode-go-usage-dock",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "DeepSeek Harness plugin: OpenCode Go plan usage readout docked under the composer, aligned with the input bar width",
   "license": "MIT",
   "scripts": {
@@ -23,6 +23,7 @@
     "index.js",
     "client.js",
     "typert.host.js",
+    "cordis.patch.yml",
     "README.md",
     "README.zh.md",
     "LICENSE",
@@ -35,6 +36,9 @@
     "./package.json": "./package.json"
   },
   "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "inject": [
         "@deepseek-ai/dsh-api-remotes",
